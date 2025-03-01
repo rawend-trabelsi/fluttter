@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:projectlavage/screens/signin_screen.dart';
 
@@ -17,15 +16,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController currentPasswordController = TextEditingController();
+  final TextEditingController currentPasswordController =
+      TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
 
   bool _isCurrentPasswordVisible = false;
   bool _isNewPasswordVisible = false;
   bool _isObscured = true; // Cela va masquer le mot de passe au départ
-
-
-
 
   final _formKey = GlobalKey<FormState>();
 
@@ -70,11 +67,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       usernameController.text,
       emailController.text,
       phoneController.text,
-      currentPasswordController.text.isEmpty ? "" : currentPasswordController.text,
+      currentPasswordController.text.isEmpty
+          ? ""
+          : currentPasswordController.text,
       newPasswordController.text.isEmpty ? "" : newPasswordController.text,
     );
-
-
 
     if (success) {
       if (_shouldRedirectToSignIn()) {
@@ -89,7 +86,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   bool _shouldRedirectToSignIn() {
     return emailController.text != initialEmail ||
-        (newPasswordController.text.isNotEmpty && newPasswordController.text != currentPasswordController.text);
+        (newPasswordController.text.isNotEmpty &&
+            newPasswordController.text != currentPasswordController.text);
   }
 
   void _showSuccessDialog({required bool isSignInRedirect}) {
@@ -108,7 +106,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               children: [
                 Icon(
                   Icons.check_circle_outline,
-                  color: Color(0xFF00BCD0), // Success icon with the desired color
+                  color:
+                      Color(0xFF00BCD0), // Success icon with the desired color
                   size: 80,
                 ),
                 SizedBox(height: 20),
@@ -136,12 +135,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       var isDarkMode;
                       var toggleTheme;
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => SignInScreen(   isDarkMode: isDarkMode,
-                      toggleTheme: toggleTheme,)),
+                        MaterialPageRoute(
+                            builder: (context) => SignInScreen(
+                                  isDarkMode: isDarkMode,
+                                  toggleTheme: toggleTheme,
+                                )),
                       );
                     } else {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => ProfileScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen()),
                       );
                     }
                   },
@@ -164,7 +167,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       },
     );
   }
-
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -225,9 +227,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
+    var isDarkMode;
+    var toggleTheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -238,7 +241,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             color: Colors.black, // Couleur du texte
           ),
         ),
-
         backgroundColor: Colors.cyan,
       ),
       body: Form(
@@ -251,7 +253,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               children: [
                 SizedBox(
                   height: 120,
-                  child: Image.asset('assets/images/edit_profile.png', fit: BoxFit.contain),
+                  child: Image.asset('assets/images/edit_profile.png',
+                      fit: BoxFit.contain),
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
@@ -277,7 +280,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'L\'email est obligatoire';
-                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                        .hasMatch(value)) {
                       return 'L\'email est invalide';
                     }
                     return null;
@@ -305,13 +309,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     labelText: 'Mot de passe actuel',
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _isCurrentPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        _isCurrentPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Color(0xFF00BCD0),
-
                       ),
                       onPressed: () {
                         setState(() {
-                          _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
+                          _isCurrentPasswordVisible =
+                              !_isCurrentPasswordVisible;
                         });
                       },
                     ),
@@ -325,53 +331,50 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                 ),
                 const SizedBox(height: 16),
-
-
-            TextFormField(
-            controller: newPasswordController,
-            decoration: InputDecoration(
-              labelText: 'Nouveau mot de passe',
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Color(0xFF00BCD0),
-
+                TextFormField(
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Nouveau mot de passe',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isNewPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Color(0xFF00BCD0),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isNewPasswordVisible = !_isNewPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !_isNewPasswordVisible,
+                  validator: (value) {
+                    if (value != null && value.isNotEmpty) {
+                      if (value == currentPasswordController.text) {
+                        return 'Le nouveau mot de passe ne peut pas être identique au mot de passe actuel';
+                      } else if (value.length < 8) {
+                        return 'Le nouveau mot de passe doit contenir au moins 8 caractères';
+                      }
+                    }
+                    return null; // Retourne null si valide ou vide
+                  },
                 ),
-                onPressed: () {
-                  setState(() {
-                    _isNewPasswordVisible = !_isNewPasswordVisible;
-                  });
-                },
-              ),
-            ),
-            obscureText: !_isNewPasswordVisible,
-            validator: (value) {
-              if (value != null && value.isNotEmpty) {
-                if (value == currentPasswordController.text) {
-                  return 'Le nouveau mot de passe ne peut pas être identique au mot de passe actuel';
-                } else if (value.length < 8) {
-                  return 'Le nouveau mot de passe doit contenir au moins 8 caractères';
-                }
-              }
-              return null; // Retourne null si valide ou vide
-            },
-          ),
-
-
                 const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: _updateProfile,
                   child: const Text(
                     'MODIFIER',
-                    style: TextStyle(color: Colors.white), // Couleur du texte en blanc
+                    style: TextStyle(
+                        color: Colors.white), // Couleur du texte en blanc
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF00BCD0), // Couleur de fond
-                    minimumSize: Size(double.infinity, 50), // Largeur étendue (infinity) et hauteur de 50
+                    minimumSize: Size(double.infinity,
+                        50), // Largeur étendue (infinity) et hauteur de 50
                   ),
-                )
-
-                ,
+                ),
               ],
             ),
           ),
@@ -379,6 +382,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       bottomNavigationBar: Footer(
         currentIndex: 2,
+        isDarkMode: isDarkMode,
+        toggleTheme: toggleTheme,
         onTap: (index) {
           if (index != 2) {
             Navigator.pushReplacementNamed(context, '/profile');

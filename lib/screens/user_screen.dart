@@ -1,15 +1,25 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../services/ServiceService.dart';
 import '../models/service.dart';
 import '../services/auth_service.dart';
+import '../theme_provider.dart';
 import 'Footer.dart';
 import 'ListeAvisScreen.dart';
 
 class UserScreen extends StatefulWidget {
   final String username;
-  const UserScreen({Key? key, required this.username}) : super(key: key);
+  final bool isDarkMode;
+  final VoidCallback toggleTheme;
+
+  const UserScreen({
+    Key? key,
+    required this.username,
+    required this.isDarkMode,
+    required this.toggleTheme,
+  }) : super(key: key);
 
   @override
   _UserScreenState createState() => _UserScreenState();
@@ -61,28 +71,54 @@ class _UserScreenState extends State<UserScreen> {
     });
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/home', arguments: widget.username);
+        Navigator.pushReplacementNamed(context, '/home');
         break;
       case 1:
-        Navigator.pushNamed(context, '/help', arguments: widget.username);
+        Navigator.pushReplacementNamed(context, '/help');
         break;
       case 2:
-        Navigator.pushNamed(context, '/profile', arguments: widget.username);
+        Navigator.pushReplacementNamed(context, '/profile');
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Utiliser le provider pour obtenir l'état le plus à jour du thème
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+
+    // Couleurs qui changent en fonction du mode
+    final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.white;
+    final primaryColor = Color(0xFF00BCD0);
+    final secondaryTextColor = isDarkMode ? Colors.white70 : Colors.grey[600];
+    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        elevation: 0,
+        actions: [
+          // Icône pour basculer entre mode clair et sombre
+          IconButton(
+            icon: Icon(
+              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              color: Colors.white,
+            ),
+            onPressed: themeProvider
+                .toggleTheme, // Utiliser directement la fonction du provider
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               decoration: BoxDecoration(
-                color: Color(0xFF00BCD0),
+                color: primaryColor,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -111,7 +147,7 @@ class _UserScreenState extends State<UserScreen> {
                   SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDarkMode ? Colors.grey[700] : Colors.white,
                       borderRadius: BorderRadius.circular(30),
                       boxShadow: [
                         BoxShadow(
@@ -124,11 +160,20 @@ class _UserScreenState extends State<UserScreen> {
                     ),
                     child: TextField(
                       controller: _searchController,
+                      style: TextStyle(
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Rechercher un service...',
+                        hintStyle: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.grey,
+                        ),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(vertical: 14),
-                        prefixIcon: Icon(Icons.search, color: Colors.grey),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: isDarkMode ? Colors.white70 : Colors.grey,
+                        ),
                       ),
                     ),
                   ),
@@ -145,7 +190,7 @@ class _UserScreenState extends State<UserScreen> {
                   style: GoogleFonts.rochester(
                     fontSize: 30,
                     fontWeight: FontWeight.w900,
-                    color: Color(0xFF00BCD0),
+                    color: primaryColor,
                   ),
                 ),
               ),
@@ -157,7 +202,9 @@ class _UserScreenState extends State<UserScreen> {
                       child: Text(
                         'Aucun service trouvé',
                         style: GoogleFonts.poppins(
-                            fontSize: 16, color: Colors.grey),
+                          fontSize: 16,
+                          color: secondaryTextColor,
+                        ),
                       ),
                     )
                   : Padding(
@@ -175,6 +222,7 @@ class _UserScreenState extends State<UserScreen> {
                           final hasPromotion = service.discountedPrice != null;
 
                           return Card(
+                            color: cardColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                               side: BorderSide(
@@ -214,7 +262,7 @@ class _UserScreenState extends State<UserScreen> {
                                             style: GoogleFonts.poppins(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w900,
-                                              color: Color(0xFF00BCD0),
+                                              color: primaryColor,
                                               decorationColor:
                                                   Color(0xFF0097A7),
                                               decorationThickness: 2,
@@ -227,16 +275,19 @@ class _UserScreenState extends State<UserScreen> {
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                color: Colors.grey[600]),
+                                              fontSize: 12,
+                                              color: secondaryTextColor,
+                                            ),
                                           ),
                                           SizedBox(height: 6),
                                           // Durée
                                           Row(
                                             children: [
-                                              Icon(Icons.timer,
-                                                  size: 14,
-                                                  color: Color(0xFF00BCD0)),
+                                              Icon(
+                                                Icons.timer,
+                                                size: 14,
+                                                color: primaryColor,
+                                              ),
                                               SizedBox(width: 4),
                                               Text(
                                                 '${service.duree}',
@@ -263,7 +314,9 @@ class _UserScreenState extends State<UserScreen> {
                                                       '${service.prix == service.prix.toInt() ? service.prix.toInt() : service.prix.toStringAsFixed(2)} DT',
                                                       style:
                                                           GoogleFonts.poppins(
-                                                        color: Colors.black54,
+                                                        color: isDarkMode
+                                                            ? Colors.white54
+                                                            : Colors.black54,
                                                         fontWeight:
                                                             FontWeight.w900,
                                                         fontSize: 12,
@@ -271,7 +324,9 @@ class _UserScreenState extends State<UserScreen> {
                                                             TextDecoration
                                                                 .lineThrough,
                                                         decorationColor:
-                                                            Colors.black,
+                                                            isDarkMode
+                                                                ? Colors.white
+                                                                : Colors.black,
                                                       ),
                                                     ),
                                                     Text(
@@ -290,7 +345,9 @@ class _UserScreenState extends State<UserScreen> {
                                                 Text(
                                                   '${service.prix == service.prix.toInt() ? service.prix.toInt() : service.prix.toStringAsFixed(2)} DT',
                                                   style: GoogleFonts.poppins(
-                                                    color: Colors.black54,
+                                                    color: isDarkMode
+                                                        ? Colors.white54
+                                                        : Colors.black54,
                                                     fontWeight: FontWeight.w900,
                                                     fontSize: 12,
                                                   ),
@@ -301,7 +358,7 @@ class _UserScreenState extends State<UserScreen> {
                                                 constraints: BoxConstraints(),
                                                 icon: Icon(
                                                   Icons.comment,
-                                                  color: Color(0xFF00BCD0),
+                                                  color: primaryColor,
                                                   size: 24,
                                                 ),
                                                 onPressed: () {
@@ -325,8 +382,7 @@ class _UserScreenState extends State<UserScreen> {
                                             child: ElevatedButton(
                                               onPressed: () {},
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Color(0xFF00BCD0),
+                                                backgroundColor: primaryColor,
                                                 foregroundColor: Colors.white,
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 8),
@@ -386,8 +442,13 @@ class _UserScreenState extends State<UserScreen> {
           ],
         ),
       ),
-      bottomNavigationBar:
-          Footer(currentIndex: _selectedIndex, onTap: _onItemTapped),
+      bottomNavigationBar: Footer(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        isDarkMode: isDarkMode, // Utiliser la valeur actualisée
+        toggleTheme: themeProvider
+            .toggleTheme, // Utiliser directement la fonction du provider
+      ),
     );
   }
 }

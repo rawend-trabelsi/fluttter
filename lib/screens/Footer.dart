@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'ProfileScreen.dart';
-
-import 'user_screen.dart'; // Import de la page UserScreen
+import 'user_screen.dart';
 
 class Footer extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final bool isDarkMode;
+  final VoidCallback toggleTheme;
 
-  const Footer({Key? key, required this.currentIndex, required this.onTap})
-      : super(key: key);
+  const Footer({
+    Key? key,
+    required this.currentIndex,
+    required this.onTap,
+    required this.isDarkMode,
+    required this.toggleTheme,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
       selectedItemColor: Color(0xFF00BCD0), // Couleur active
-      unselectedItemColor: Colors.grey, // Couleur inactive
+      unselectedItemColor: isDarkMode
+          ? Colors.grey[400]
+          : Colors.grey, // Couleur inactive adaptée au thème
       currentIndex: currentIndex,
       onTap: (index) {
         onTap(index);
@@ -25,8 +33,10 @@ class Footer extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => UserScreen(
-                  username: '',
-                )), // Navigation vers UserScreen
+                      username: '',
+                      isDarkMode: isDarkMode,
+                      toggleTheme: toggleTheme,
+                    )), // Navigation vers UserScreen
           );
         } else if (index == 2) {
           Navigator.pushReplacement(
@@ -38,7 +48,7 @@ class Footer extends StatelessWidget {
         }
       },
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Acceuil'),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
         BottomNavigationBarItem(icon: Icon(Icons.help), label: 'Aide & FAQ'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
       ],

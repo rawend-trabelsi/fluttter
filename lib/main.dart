@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectlavage/screens/ForgotPasswordPage.dart';
 import 'package:provider/provider.dart';
 import 'package:projectlavage/screens/AboutUsScreen.dart';
 import 'package:projectlavage/screens/EditProfilePage.dart';
@@ -43,10 +44,21 @@ class MyApp extends StatelessWidget {
                   isDarkMode: themeProvider.isDarkMode,
                   toggleTheme: themeProvider.toggleTheme,
                 ),
-            '/aboutus': (context) => AboutUsScreen(),
+            '/aboutus': (context) => AboutUsScreen(
+                  isDarkMode: themeProvider.isDarkMode,
+                  toggleTheme: themeProvider.toggleTheme,
+                ),
             '/profile': (context) => ProfileScreen(),
             '/edit_profile': (context) => EditProfilePage(),
-            '/home': (context) => UserScreen(username: ''),
+            '/home': (context) => UserScreen(
+                  username: '',
+                  isDarkMode: themeProvider.isDarkMode,
+                  toggleTheme: themeProvider.toggleTheme,
+                ),
+            '/forgot_password': (context) => ForgotPasswordPage(
+                  isDarkMode: themeProvider.isDarkMode,
+                  toggleTheme: themeProvider.toggleTheme,
+                ),
           },
         );
       },

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Avis.dart';
 
 class AvisService {
-  final String apiUrl = "http:///192.168.1.14:8080/api/avis";
+  final String apiUrl = "http:///192.168.1.14:8088/api/avis";
 
   // Méthode pour récupérer les avis d'un service
   Future<List<Avis>> fetchAvis(int idService) async {

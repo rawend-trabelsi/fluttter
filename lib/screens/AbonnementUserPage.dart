@@ -21,6 +21,8 @@ class _AbonnementUserPageState extends State<AbonnementUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    var isDarkMode;
+    var toggleTheme;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -65,7 +67,8 @@ class _AbonnementUserPageState extends State<AbonnementUserPage> {
                   itemBuilder: (context, index) {
                     final abonnement = snapshot.data![index];
                     return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: Color(0xFF2B2C2E), // Fond gris foncé
                         borderRadius: BorderRadius.circular(10),
@@ -76,12 +79,13 @@ class _AbonnementUserPageState extends State<AbonnementUserPage> {
                           borderRadius: BorderRadius.circular(8),
                           child: abonnement.imageUrl.isNotEmpty
                               ? Image.memory(
-                            base64Decode(abonnement.imageUrl),
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          )
-                              : Icon(Icons.image, size: 60, color: Colors.white),
+                                  base64Decode(abonnement.imageUrl),
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(Icons.image,
+                                  size: 60, color: Colors.white),
                         ),
                         title: Text(
                           abonnement.titre,
@@ -92,10 +96,11 @@ class _AbonnementUserPageState extends State<AbonnementUserPage> {
                           ),
                         ),
                         subtitle: Text(
-                            abonnement.prix == abonnement.prix.toInt()
-                                ? '${abonnement.prix.toInt()} DT'
-                                : '${abonnement.prix.toStringAsFixed(2)} DT',
-                          style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                          abonnement.prix == abonnement.prix.toInt()
+                              ? '${abonnement.prix.toInt()} DT'
+                              : '${abonnement.prix.toStringAsFixed(2)} DT',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[400]),
                         ),
                         trailing: TextButton(
                           onPressed: () {
@@ -121,6 +126,8 @@ class _AbonnementUserPageState extends State<AbonnementUserPage> {
       ),
       bottomNavigationBar: Footer(
         currentIndex: 2,
+        isDarkMode: isDarkMode,
+        toggleTheme: toggleTheme,
         onTap: (index) {
           if (index != 2) {
             Navigator.pushReplacementNamed(context, '/profile');

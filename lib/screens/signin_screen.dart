@@ -85,8 +85,11 @@ class _SignInScreenState extends State<SignInScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      UserScreen(username: _emailController.text)),
+                  builder: (context) => UserScreen(
+                        username: _emailController.text,
+                        isDarkMode: widget.isDarkMode,
+                        toggleTheme: widget.toggleTheme,
+                      )),
             );
           } else {
             _showToast('Invalid role', color: Colors.red);

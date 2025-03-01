@@ -1,100 +1,79 @@
 import 'package:flutter/material.dart';
-
+import 'package:projectlavage/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:projectlavage/screens/signin_screen.dart';
-
 import '../services/auth_service.dart';
+
 import 'AbonnementUserPage.dart';
 import 'AboutUsScreen.dart';
 import 'EditProfilePage.dart';
-import 'Footer.dart'; // Assure-toi d'importer ton service d'authentification
-// Assure-toi d'importer la page de connexion
+import 'Footer.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final AuthService authService = AuthService(); // Instance de ton AuthService
+  final AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
+    var themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDarkMode = themeProvider.isDarkMode;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon:
+              Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Mon profil",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge!.color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isDarkMode ? Icons.nightlight_round : Icons.wb_sunny,
+              color: Theme.of(context).iconTheme.color,
+            ),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Profil Section
             _buildProfileOption(
-              Icons.person_outline,
-              "Modifier Profil",
-              context,
-            ),
+                Icons.person_outline, "Modifier Profil", context, isDarkMode),
             _buildProfileOption(
-              Icons.notifications_none,
-              "Notifications",
-              context,
-            ),
-            Divider(),
-            // Commandes Section
+                Icons.notifications_none, "Notifications", context, isDarkMode),
+            Divider(color: Theme.of(context).dividerColor),
             _buildProfileOption(
-              Icons.shopping_cart_outlined,
-              "Commandes",
-              context,
-            ),
+                Icons.shopping_cart_outlined, "Commandes", context, isDarkMode),
+            _buildProfileOption(Icons.location_on_outlined,
+                "Localisation du technicien", context, isDarkMode),
+            Divider(color: Theme.of(context).dividerColor),
             _buildProfileOption(
-              Icons.location_on_outlined,
-              "Localisation du technicien",
-              context,
-            ),
-            Divider(),
-            // About Us and Subscriptions Section
+                Icons.info_outline, "À propos de nous", context, isDarkMode),
+            _buildProfileOption(Icons.subscriptions_outlined, "Abonnements",
+                context, isDarkMode),
+            Divider(color: Theme.of(context).dividerColor),
             _buildProfileOption(
-              Icons.info_outline,
-              "À propos de nous",
-              context,
-            ),
-            _buildProfileOption(
-              Icons.subscriptions_outlined,
-              "Abonnements",
-              context,
-            ),
-            Divider(),
-// Déconnecter Section moved to the end
-            _buildProfileOption(
-              Icons.logout,
-              "Déconnecter",
-              context,
-              isLogout:
-                  true, // Ajouter un paramètre pour spécifier qu'il s'agit de la déconnexion
-            ),
-            ListTile(
-              onTap: () async {
-                // Appeler signOut() de AuthService pour déconnecter l'utilisateur
-                await authService.signOut();
-
-                // Rediriger vers la page de connexion
-                var isDarkMode;
-                var toggleTheme;
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignInScreen(   isDarkMode: isDarkMode,
-                      toggleTheme: toggleTheme,)),
-                );
-              },
-            ),
+                Icons.logout, "Déconnecter", context, isDarkMode,
+                isLogout: true),
           ],
         ),
       ),
       bottomNavigationBar: Footer(
-        currentIndex: 2, // Met "Profile" en actif
+        currentIndex: 2,
+        isDarkMode: isDarkMode,
+        toggleTheme: themeProvider.toggleTheme,
         onTap: (index) {
           if (index != 2) {
             _navigateToScreen(context, index);
@@ -104,69 +83,77 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileOption(IconData icon, String title, BuildContext context,
+  Widget _buildProfileOption(
+      IconData icon, String title, BuildContext context, bool isDarkMode,
       {bool isLogout = false}) {
+    Color textColor = isDarkMode ? Colors.white : Colors.black87;
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
       margin: EdgeInsets.symmetric(vertical: 8),
+      color: Theme.of(context).cardColor,
       child: ListTile(
-          leading:
-              Icon(icon, color: Color(0xFF00BCD0), size: 30), // Couleur cyan
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
+        leading: Icon(icon, color: Color(0xFF00BCD0), size: 30),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: textColor, // Texte qui s'adapte au mode sombre
           ),
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            size: 18,
-            color: Colors.black54,
-          ),
-          onTap: () {
-            if (isLogout) {
-              _handleLogout(context); // Appel à la méthode de déconnexion
-            } else {
-              // Navigation en fonction du titre
-              if (title == "Modifier Profil") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EditProfilePage()),
-                );
-              } else if (title == "À propos de nous") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AboutUsScreen()),
-                );
-              } else if (title == "Abonnements") {
-                // Ajout pour naviguer vers AbonnementUserPage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AbonnementUserPage()),
-                );
-              }
-            }
-          }),
+        ),
+        trailing: Icon(Icons.arrow_forward_ios, size: 18, color: textColor),
+        onTap: () {
+          if (isLogout) {
+            _handleLogout(context);
+          } else {
+            _navigateToPage(title, context, isDarkMode,
+                Provider.of<ThemeProvider>(context, listen: false).toggleTheme);
+          }
+        },
+      ),
     );
+  }
+
+  void _navigateToPage(String title, BuildContext context, bool isDarkMode,
+      VoidCallback toggleTheme) {
+    switch (title) {
+      case "Modifier Profil":
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => EditProfilePage()));
+        break;
+      case "À propos de nous":
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AboutUsScreen(
+                    isDarkMode: isDarkMode, toggleTheme: toggleTheme)));
+        break;
+      case "Abonnements":
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => AbonnementUserPage()));
+        break;
+    }
   }
 
   void _handleLogout(BuildContext context) async {
     await authService.signOut();
-    var isDarkMode;
-    var toggleTheme;
+
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    VoidCallback toggleTheme =
+        Provider.of<ThemeProvider>(context, listen: false).toggleTheme;
+
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignInScreen(   isDarkMode: isDarkMode,
-                      toggleTheme: toggleTheme,)),
+      MaterialPageRoute(
+          builder: (context) =>
+              SignInScreen(isDarkMode: isDarkMode, toggleTheme: toggleTheme)),
     );
   }
-
-
 
   void _navigateToScreen(BuildContext context, int index) {
     switch (index) {
@@ -181,5 +168,4 @@ class ProfileScreen extends StatelessWidget {
         break;
     }
   }
-
 }

@@ -43,6 +43,8 @@ class _ListeAvisScreenState extends State<ListeAvisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var isDarkMode;
+    var toggleTheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -156,6 +158,8 @@ class _ListeAvisScreenState extends State<ListeAvisScreen> {
           ),
           Footer(
             currentIndex: 0,
+              isDarkMode: isDarkMode,
+  toggleTheme: toggleTheme,
             onTap: (index) {
               if (index != 0) {
                 Navigator.pushReplacementNamed(context, '/home');

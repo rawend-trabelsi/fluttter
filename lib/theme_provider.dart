@@ -10,16 +10,22 @@ class ThemeProvider with ChangeNotifier {
     _loadTheme();
   }
 
-  void _loadTheme() async {
+  // Charger le thème depuis les préférences partagées
+  Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     _isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    notifyListeners(); // Notifier les widgets de l'application
+    notifyListeners();
   }
 
-  void toggleTheme() async {
-    _isDarkMode = !_isDarkMode;
+  // Sauvegarder le thème dans les préférences partagées
+  Future<void> _saveTheme() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isDarkMode', _isDarkMode);
+  }
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    _saveTheme();
     notifyListeners();
   }
 }

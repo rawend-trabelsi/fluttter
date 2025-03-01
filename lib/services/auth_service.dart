@@ -6,7 +6,7 @@ import '../models/signin_request.dart';
 import '../models/signup_request.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://192.168.1.14:8080/api/v1/auth';
+  static const String baseUrl = 'http://192.168.1.14:8085/api/v1/auth';
 
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -280,7 +280,7 @@ class AuthService {
       final List<dynamic> responseData = json.decode(response.body);
       return List<Map<String, dynamic>>.from(responseData);
     } else {
-      return null; // Si la requête échoue
+      return null;
     }
   }
 }

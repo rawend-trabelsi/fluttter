@@ -146,6 +146,8 @@ class _AjouterAvisScreenState extends State<AjouterAvisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var isDarkMode;
+    var toggleTheme;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -232,6 +234,8 @@ class _AjouterAvisScreenState extends State<AjouterAvisScreen> {
       ),
       bottomNavigationBar: Footer(
         currentIndex: 0,
+        isDarkMode: isDarkMode,
+        toggleTheme: toggleTheme,
         onTap: (index) {
           if (index != 0) {
             Navigator.pushReplacementNamed(context, '/home');

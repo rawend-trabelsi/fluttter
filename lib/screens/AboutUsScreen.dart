@@ -3,6 +3,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'footer.dart';
 
 class AboutUsScreen extends StatelessWidget {
+  final bool isDarkMode;
+  final VoidCallback toggleTheme;
+
+  const AboutUsScreen({
+    Key? key,
+    required this.isDarkMode,
+    required this.toggleTheme,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,12 +104,14 @@ class AboutUsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: Footer(
-        currentIndex: 2, // Garde le bouton Profil sélectionné
+     /* bottomNavigationBar: Footer(
+        currentIndex: 2,
+        isDarkMode: isDarkMode,
+        toggleTheme: toggleTheme, // Garde le bouton Profil sélectionné
         onTap: (index) {
           // Ajoute une logique si besoin
         },
-      ),
+      ),*/
     );
   }
 
